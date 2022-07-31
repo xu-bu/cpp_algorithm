@@ -1,37 +1,49 @@
-//
-// Created by test on 2022/7/2.
-//
 #include <bits/stdc++.h>
 
 using namespace std;
 
 class Solution {
-    struct cmp {
-        bool operator()(pair<char, int> &a, pair<char, int> &b) {
-            if (a.second == b.second) {
-                return a.first < b.first;
-            }
-            return a.second < b.second;
-        }
-    };
-
 public:
-    void reconstructQueue(string input,int interval) {
-        priority_queue<int,vector<int>,greater<int>> heap;
-        vector<int> nums={1,5,6,3,8,9,4,2,2463,35};
-        for (auto each:nums){
-            heap.push(each);
+    int closestMeetingNode(vector<int> &edges, int node1, int node2) {
+        vector<int> reachNode;
+        vector<int> distance;
+        int start = node1;
+        int dis = 0;
+        while (start != -1 && !count(reachNode.begin(), reachNode.end(), start)) {
+            reachNode.emplace_back(start);
+            distance.emplace_back(dis);
+            start = edges[start];
+            dis++;
         }
-        for (int i=0;i<5;i++){
-            cout<<heap.top()<<endl;
-            heap.pop();
+        vector<int> node2Reach{};
+        start = node2;
+        int lastDis=0x7ffff;
+        dis = 0;
+        int ans=-1;
+        while (start != -1 && !count(node2Reach.begin(), node2Reach.end(), start)) {
+            node2Reach.emplace_back(start);
+            for (int i = 0; i < reachNode.size(); ++i) {
+                int curDis=max(dis,distance[i]);
+                if (reachNode[i] == start&&curDis<=lastDis) {
+                    if(curDis==lastDis){
+                        ans=min(start,ans);
+                    }else{
+                        ans=start;
+                    }
+                    lastDis=curDis;
+                }
+            }
+            start = edges[start];
+            dis++;
         }
+        return ans;
     }
 };
 
 int main() {
-    string s="124";
-    char* num=const_cast<char *>(s.c_str());
-
-    cout<<num;
+    vector<int> nums = {5,3,1,0,2,4,5};
+    string s = "ab";
+    string p = ".*";
+    Solution solution = Solution();
+    cout << solution.closestMeetingNode(nums, 3, 2);
 }
