@@ -1,0 +1,9 @@
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/a.dir
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/b.dir
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/c.dir
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/structTest.dir
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/classTest.dir
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/strtok_sTest.dir
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/tree.dir
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/CLionProjects/cpp_algorithm/cmake-build-debug/CMakeFiles/rebuild_cache.dir
