@@ -2,9 +2,18 @@
 
 using namespace std;
 
+class Test{
+private:
+    int val;
+public:
+    explicit Test (int x):val(x){};
+    int getVal(){return val;};
+};
+
+void doBar(Test t){
+    int i=t.getVal();
+}
+
 int main() {
-    vector<int> a(9);
-    for(auto &each:a){
-        cout<<each;
-    }
+    doBar(42);
 }
