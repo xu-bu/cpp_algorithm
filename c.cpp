@@ -3,8 +3,8 @@
 using namespace std;
 
 int main() {
-    vector<int> a(9);
-    for(auto &each:a){
-        cout<<each;
-    }
+    unordered_map<int,int> a;
+    a[1]=1;
+    a[1]=2;
+    cout<<a[1];
 }
