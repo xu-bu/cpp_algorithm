@@ -6,39 +6,32 @@
 
 using namespace std;
 
-class LogSystem{
+class Base{
 public:
-    map<int,int> dic;
-    LogSystem(){
+    Base(int x):a(x){}
+    void print(){cout<<"base"<<endl;}
+private:
+    int a;
+};
 
-    }
+class Derived:public Base{
+public:
+    Derived(int x):Base(x-1),b(x){}
+    void print(){cout<<"Derived"<<endl;}
+private:
+    int b;
+};
 
-    void Add(int id,int timeStamp){
-        this->dic[id]=timeStamp;
-    }
-
-    int Delete(int id){
-        int ret=this->dic.erase(id);
-        return ret;
-    }
-
-    int Query(int startTime,int endTime){
-        int ret=0;
-        for(auto it:this->dic){
-            if(it.second<=endTime&&it.second>=startTime){
-                ret++;
-            }
-        }
-        return ret;
-    }
+class C:public Derived{
+public:
+    C(int x): Derived(x){}
 };
 
 int main(){
-    LogSystem obj=LogSystem();
-    obj.Add(1,5);
-    obj.Add(2,5);
-    obj.Add(3,6);
-    cout<<obj.Delete(2)<<endl;
-    cout<<obj.Delete(4)<<endl;
-    cout<<obj.Query(5,6)<<endl;
+    Base obj1(1);
+    cout<<sizeof(obj1)<<endl;
+    Derived obj2(2);
+    cout<<sizeof(obj2)<<endl;
+    C obj3(3);
+    cout<<sizeof(obj3)<<endl;
 }
