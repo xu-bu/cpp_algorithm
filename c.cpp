@@ -16,6 +16,10 @@ public:
 
 
 int main() {
-    int i=5;
-    cout<<(char)(97+i);
+    list<int> l={1,3};
+    list<int> element={2};
+    l.splice(l.begin()+1,element);
+    for (auto &each:l) {
+        cout<<each;
+    }
 }
