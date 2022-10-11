@@ -6,72 +6,130 @@
 using namespace std;
 
 class Solution {
+private:
+    //212
+    //it's OK to define these variables as global or parameter
+    int rows, cols;
+    bool visit[14][14];
+    vector<pair<int, int>> directions{{-1, 0},
+                                      {1,  0},
+                                      {0,  1},
+                                      {0,  -1}};
+    vector<string> ans;
+
 public:
+    //212
+    //search 4 directions from board[x][y]
+    void dfs(vector<vector<char>> &board, int i, int j, string path, unordered_set<string> &words) {
+        if (path.size() > 10) {
+            return;
+        }
+        if (words.count(path) != 0) {
+            words.erase(path);
+            ans.emplace_back(path);
+        }
+        for (auto &each: directions) {
+            int x = i + each.first;
+            int y = j + each.second;
+            if (x >= 0 and x < rows and y >= 0 and y < cols and !visit[x][y]) {
+                visit[x][y] = true;
+                path += board[x][y];
+                dfs(board, x, y, path, words);
+                path.erase(path.end() - 1);
+                visit[x][y] = false;
+            }
+        }
+    }
+
+    //212
+    //the key point is that the word.size()<=10, after choose a direction, then next search only has 3 potential directions, the appropriate operations would be 4*3^10.Since u can choose every char as a start, the total operation number is about 12*12*4*3^10, which means u can just dfs to search every string less than 10-char in this matrix
+    vector<string> findWords(vector<vector<char>> &_board, vector<string> &words) {
+        rows = _board.size();
+        cols = _board[0].size();
+        unordered_set<string> set;
+        for (auto &each: words) {
+            set.emplace(each);
+        }
+        string path;
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                if (!visit[i][j]) {
+                    visit[i][j] = true;
+                    path += _board[i][j];
+                    dfs(_board, i, j, path, set);
+                    path = "";
+                    visit[i][j] = false;
+                }
+            }
+        }
+        return ans;
+    }
+
     //拓扑排序
     //首先用哈希表记录每个点的入度，然后开始循环删去入度为0的点以及其相邻的边，删除的顺序即为排序。如果某一时刻不存在入度为0的点，则说明存在环
     //207 判断有无环
-    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        map<int,int> degrees;
-        map<int,vector<int>> edges;
-        for(auto &each:prerequisites){
+    bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
+        map<int, int> degrees;
+        map<int, vector<int>> edges;
+        for (auto &each: prerequisites) {
             degrees[each[1]]++;
             edges[each[0]].emplace_back(each[1]);
 //            edges[each[1]].emplace_back(each[0]);
         }
-        int n=prerequisites.size();
+        int n = prerequisites.size();
         vector<int> deleteV;
         for (int i = 0; i < numCourses; ++i) {
-            if(degrees[i]==0){
+            if (degrees[i] == 0) {
                 deleteV.emplace_back(i);
             }
         }
-        while (!deleteV.empty()){
-            numCourses-=deleteV.size();
+        while (!deleteV.empty()) {
+            numCourses -= deleteV.size();
             vector<int> next;
-            for(auto &v:deleteV){
-                for(auto &each:edges[v]){
+            for (auto &v: deleteV) {
+                for (auto &each: edges[v]) {
                     degrees[each]--;
-                    if(degrees[each]==0){
+                    if (degrees[each] == 0) {
                         next.emplace_back(each);
                     }
                 }
             }
-            deleteV=next;
+            deleteV = next;
         }
-        return numCourses==0;
+        return numCourses == 0;
     }
 
     //210 拓扑排序
-    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites){
+    vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites) {
         map<int, vector<int>> edges;
-        map<int,int> degrees;
+        map<int, int> degrees;
         vector<int> deleteV;
-        for(auto &each:prerequisites){
+        for (auto &each: prerequisites) {
             edges[each[1]].emplace_back(each[0]);
             degrees[each[0]]++;
         }
         vector<int> ans;
         for (int i = 0; i < numCourses; ++i) {
-            if(degrees[i]==0){
+            if (degrees[i] == 0) {
                 deleteV.emplace_back(i);
             }
         }
 
-        while(!deleteV.empty()){
+        while (!deleteV.empty()) {
             vector<int> next;
-            numCourses-=deleteV.size();
-            for(auto &v:deleteV){
+            numCourses -= deleteV.size();
+            for (auto &v: deleteV) {
                 ans.emplace_back(v);
-                for(auto &each:edges[v]){
+                for (auto &each: edges[v]) {
                     degrees[each]--;
-                    if(degrees[each]==0){
+                    if (degrees[each] == 0) {
                         next.emplace_back(each);
                     }
                 }
             }
-            deleteV=next;
+            deleteV = next;
         }
-        if(numCourses!=0){
+        if (numCourses != 0) {
             return vector<int>{};
         }
         return ans;
@@ -98,8 +156,8 @@ public:
             }
         }
         //遍历每个需要被删除的点，获取与它相邻的点，由于这个点被删除了，degrees[相邻点]--。由于本题返回的ans只会是1或2个点，故跳出条件是n>2
-        while (n> 2) {
-            n-=deleteV.size();
+        while (n > 2) {
+            n -= deleteV.size();
             //next存储下一轮需要被删除的点
             vector<int> next;
             for (auto &v: deleteV) {
@@ -108,13 +166,13 @@ public:
                     //如果点x的入度为0，则degrees[x]是一直为0的，不可能是从别的数减下来的，无法加入next
                     //最后一轮中入度被减到1的点即为ans，如[0,1],[0,2]的情况，最后一轮时一开始degrees[0]=2，然后遍历1的时候减一下变为1，就加进去了
                     //[0,1],[1,2],[2,3]的情况同理
-                    if(degrees[each]==1){
+                    if (degrees[each] == 1) {
                         //新产生的入度为1 的点，加入等待被删除的列表
                         next.emplace_back(each);
                     }
                 }
             }
-            deleteV=next;
+            deleteV = next;
         }
 
         return deleteV;
@@ -158,7 +216,7 @@ public:
         if (end == -1) {
             return 0;
         }
-        if(canLink(beginWord,endWord)){
+        if (canLink(beginWord, endWord)) {
             return 2;
         }
         vector<int> queue;
@@ -166,10 +224,10 @@ public:
         for (int i = 0; i < n; ++i) {
             if (canLink(wordList[i], beginWord)) {
                 queue.emplace_back(i);
-                visit[i]=true;
+                visit[i] = true;
             }
         }
-        int curEnd = queue.size()-1, nextEnd = queue.size()-1;
+        int curEnd = queue.size() - 1, nextEnd = queue.size() - 1;
         int index = 0;
         int ans = 0;
 
@@ -181,7 +239,7 @@ public:
             for (auto &each: dic[curWord]) {
                 if (!visit[each]) {
                     queue.emplace_back(each);
-                    visit[each]=true;
+                    visit[each] = true;
                     nextEnd++;
                 }
             }
@@ -196,12 +254,15 @@ public:
 };
 
 int main() {
-    vector<vector<int>> nums = {{1,0}};
+    vector<vector<int>> nums = {{1, 0}};
     vector<int> pop = {1, 2, 3, 4, 5};
     string s = "Let's take LeetCode contest";
     string p = ".*";
     Solution solution = Solution();
-    vector<vector<int>> r={{1,2},{7,3},{4,3},{5,8},{7,8},{8,2},{5,8},{3,2},{1,3},{7,6},{4,3},{7,4},{4,8},{7,3},{7,5}};
-    vector<vector<int>> c={{5,7},{2,7},{4,3},{6,7},{4,3},{2,3},{6,2}};
-    solution.buildMatrix(8,r,c);
+    vector<vector<char>> board = {{'o', 'a', 'a', 'n'},
+                                  {'e', 't', 'a', 'e'},
+                                  {'i', 'h', 'k', 'r'},
+                                  {'i', 'f', 'l', 'v'}};
+    vector<string> words = {"oath", "pea", "eat", "rain"};
+    solution.findWords(board, words);
 }
