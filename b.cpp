@@ -35,67 +35,20 @@ public:
 
 class Solution {
 public:
-    int rows, cols;
-
-    void dfs(dicTree *trie, int x, int y, vector<vector<char>> &board) {
-        trie->children[board[x][y] - 'a'] = new dicTree(board[x][y]);
-        if (x - 1 >= 0) {
-            dfs(&dicTree(board[x - 1][y]))
-        }
-        if (y - 1 >= 0) {
-            char ch = board[x][y - 1];
-            node->add(nodes[ch - 'a']);
-        }
-        if (x + 1 < board.size()) {
-            char ch = board[x + 1][y];
-            node->add(nodes[ch - 'a']);
-        }
-        if (y + 1 < board[0].size()) {
-            char ch = board[x][y + 1];
-            node->add(nodes[ch - 'a']);
-        }
-
+    //given the value of each component, return the max edges can be deleted
+    int sub(int value,vector<int>& nums, vector<vector<int>>& edges){
+        //for any note i, if itself's weight equal value, of course we should delete edge [i,j]. If its child j's subtree sum equal the multiple of value
     }
 
-    vector<string> findWords(vector<vector<char>> &board, vector<string> &words) {
-        rows = board.size();
-        cols = board[0].size();
-        vector<dicTree *> nodes(26);
-        for (int x = 0; x < rows; ++x) {
-            for (int y = 0; y < cols; ++y) {
-                nodes[board[x][y] - 'a'] = new dicTree(board[x][y]);
+    int componentValue(vector<int>& nums, vector<vector<int>>& edges) {
+        int sum= accumulate(nums.begin(),nums.end(),0);
+        for (int i = sum/2; i >=2 ; --i) {
+            if (sum%i==0){
+                int value=sum/i;
+
             }
         }
-        for (int x = 0; x < rows; ++x) {
-            for (int y = 0; y < cols; ++y) {
-                dicTree *node = nodes[board[x][y] - 'a'];
-                if (x - 1 >= 0) {
-                    char ch = board[x - 1][y];
-                    node->add(nodes[ch - 'a']);
-                }
-                if (y - 1 >= 0) {
-                    char ch = board[x][y - 1];
-                    node->add(nodes[ch - 'a']);
-                }
-                if (x + 1 < board.size()) {
-                    char ch = board[x + 1][y];
-                    node->add(nodes[ch - 'a']);
-                }
-                if (y + 1 < board[0].size()) {
-                    char ch = board[x][y + 1];
-                    node->add(nodes[ch - 'a']);
-                }
-            }
-        }
-        vector<string> ans;
-        for (auto &word: words) {
-            for (auto &node: nodes) {
-                if (node->ch == word.at(0) and node->query(word.substr(1, word.size() - 1))) {
-                    ans.emplace_back(word);
-                }
-            }
-        }
-        return ans;
+        return 0;
     }
 };
 

@@ -1,5 +1,3 @@
-
-
 #include <bits/stdc++.h>
 
 #include <utility>
@@ -17,48 +15,57 @@ struct TreeNode {
 
 class Solution {
 public:
-    vector<int> merge(vector<int> &v1,vector<int> &v2,vector<int> &nums){
+    vector<int> merge(vector<int> &v1, vector<int> &v2, vector<int> &nums) {
         vector<int> ret;
-        int i=0;
-        while(i<v1.size() and i<v2.size()){
-            if(nums[v1[i]]<nums[v2[i]]){
-                ret.emplace_back(v1[i]);
-            }else{
-                ret.emplace_back(v2[i]);
+        int p = 0, q = 0;
+        while (p < v1.size() and q < v2.size()) {
+            if (nums[v1[p]] < nums[v2[q]]) {
+                ret.emplace_back(v1[p]);
+                p++;
+            } else {
+                ret.emplace_back(v2[q]);
+                q++;
             }
-            i++;
         }
-        while(i<v1.size()){
-            ret.emplace_back(v1[i]);
-            i++;
+        while (p < v1.size()) {
+            ret.emplace_back(v1[p]);
+            p++;
         }
-        while(i<v2.size()){
-            ret.emplace_back(v2[i]);
-            i++;
+        while (q < v2.size()) {
+            ret.emplace_back(v2[q]);
+            q++;
         }
         return ret;
     }
 
-    vector<int> mergeSort(vector<int> &indexs,vector<int> &nums){
-        if(indexs.size()<=1){
+    vector<int> mergeSort(vector<int> &indexs, vector<int> &nums, int start, int end) {
+        if (indexs.size() <= 1) {
             return indexs;
         }
         vector<int> l;
-        l.assign(indexs.begin(),indexs.begin()+indexs.size()/2);
+        int mid = start + ((end - start) >> 1);
+        for (int i = 0; i < mid; ++i) {
+            l.emplace_back(indexs[i]);
+        }
+        l=mergeSort(l, nums, start, mid);
         vector<int> r;
-        r.assign(indexs.begin()+indexs.size()/2,indexs.end());
-        merge(l,r,nums);
-        l.insert(l.end(),r.begin(),r.end());
-        return l;
+        for (int i = mid; i < end; ++i) {
+            r.emplace_back(indexs[i]);
+        }
+        r=mergeSort(r, nums, mid, end);;
+        return merge(l, r, nums);
     }
 
-    vector<int> smallerNumbersThanCurrent(vector<int>& nums) {
+    vector<int> smallerNumbersThanCurrent(vector<int> &nums) {
         vector<int> indexs;
         for (int i = 0; i < nums.size(); ++i) {
             indexs.emplace_back(i);
         }
-        vector<int> ans;
-        ans=mergeSort(indexs,nums);
+        vector<int> ans(nums.size());
+        indexs = mergeSort(indexs, nums, 0, nums.size());
+        for (int i = 0; i < ans.size(); ++i) {
+            ans[indexs[i]]=i;
+        }
         return ans;
     }
 };
@@ -66,9 +73,12 @@ public:
 int main() {
     string word = "ab";
     string prefix = "app";
-    vector<int> nums={8,1,2,2,3};
+    vector<int> nums = {8,1,2,2,3};
     Solution solution = Solution();
-    solution.smallerNumbersThanCurrent(nums);
+    nums=solution.smallerNumbersThanCurrent(nums);
+    for (auto each: nums) {
+        cout << each << endl;
+    }
 }
 
 
