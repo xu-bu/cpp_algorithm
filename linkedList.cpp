@@ -30,15 +30,13 @@ public:
             head = head->next;
         }
     }
-
 };
 
 int main() {
-    vector<int> nums = {1};
-    vector<int> tmp = {9,9};
+    vector<int> nums = {1, 2, 2, 1};
+    vector<int> tmp = {9, 9};
     Solution s = Solution();
     ListNode *l1 = s.createList(nums);
     ListNode *l2 = s.createList(tmp);
-
-    s.traverse(s.addTwoNumbers(l1, l2));
+    cout << s.isPalindrome(l1);
 }

@@ -2,6 +2,7 @@
 
 using namespace std;
 
-int main(){
-    unorder
+int main() {
+    string s="sdg";
+    cout<<s.reserve();
 }

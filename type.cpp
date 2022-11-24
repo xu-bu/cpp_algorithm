@@ -4,8 +4,8 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-    map<int,int> dic;
-    dic[1]=1;
+    string s="rgs";
+    int a=std::count(s.begin(), s.end(),'g');
     const char*  mangling_name;
     for(auto &each:dic){
         mangling_name =typeid(each).name();
