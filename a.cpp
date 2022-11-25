@@ -16,7 +16,7 @@ struct TreeNode {
 
 class Solution {
 public:
-    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
         int n=edges.size();
         vector<bool> visit(n);
         function<bool(int)> checkTree=[&](int deleteEdge){
@@ -39,7 +39,7 @@ public:
             while(!deleteNodes.empty()){
                 int node=deleteNodes.top();
                 deleteNodes.pop();
-                visit[node]=true;
+                visit[node-1]=true;
                 for(auto &each:node2edges[node]){
                     degree[each]--;
                     if(degree[each]==1){
@@ -54,7 +54,7 @@ public:
             }
             return true;
         };
-        for (int i = n-1; i >=0; ++i) {
+        for (int i = n-1; i >=0; --i) {
             if(checkTree(i)){
                 return edges[i];
             }
@@ -67,13 +67,9 @@ int main() {
     string word = "ab";
     string prefix = "app";
     vector<int> nums = {6, 2, 2, 2, 6};
-    vector<vector<int>> edges = {{0, 1},
-                                 {1, 2},
-                                 {1, 3},
-                                 {3, 4}};
+    vector<vector<int>> edges = {{1,2},{2,3},{3,4},{1,4},{1,5}};
     Solution solution = Solution();
-    cout << solution.componentValue(nums, edges);
-
+    solution.findRedundantConnection(edges);
 }
 
 
