@@ -296,7 +296,7 @@ public:
         for (int i = nums.size(); i >= 1; --i) {
             if (sum % i == 0) {
                 value = sum / i;
-                if (divide(-1,0, nums, edges) == 0) {
+                if (divide(-1, 0, nums, edges) == 0) {
                     // divide into i parts need to delete i-1 edges
                     return i - 1;
                 }
@@ -331,6 +331,145 @@ public:
             return -1;
         }
         return matrix[src][k + 1];
+    }
+
+    // 1514 dijkstra, calculate the shortest path from start to each node in a graph without negative cycle, time complexity depends on the implementation of algorithm. Here is O(mlog m).
+    // if negative weight exists, cannot prove the result is right
+    double maxProbability(int n, vector<vector<int>>& edges, vector<double>& succProb, int start, int end) {
+        // use this structure to store graph
+        // graph[i].second means the prob between graph[i].first and i
+        vector<vector<pair<int,double>>> graph(n);
+        for (int i = 0; i < edges.size(); ++i) {
+            vector<int> edge=edges[i];
+            graph[edge[0]].emplace_back(edge[1],succProb[i]);
+            graph[edge[1]].emplace_back(edge[0],succProb[i]);
+        }
+        // the algorithm here
+
+        priority_queue<pair<double,int>> heap;
+        vector<double> prob(n,0);
+        // don't need {} to emplace pair
+        heap.emplace(1,start);
+        prob[start]=1;
+        while(!heap.empty()){
+            auto top=heap.top();
+            heap.pop();
+            // each time we pop the top node from the heap then traverse all its edges. For each edge topNode->nextNode. Check if start->topNode * topNode->nextNode is lower than start->nextNode, if so, update the prob and push nextNode into heap. The weight of nextNode is the prob from start to nextNode.
+            // when heap is empty, this algorithm will terminate
+            for(auto &each:graph[top.second]){
+                // start->topNode : prob[top.second]/top.first
+                // topNode->nextNode : each.second
+                // start->nextNode : prob[each.first]
+                if(prob[each.first]<top.first*each.second){
+                    prob[each.first]= top.first*each.second;
+                    heap.emplace(prob[each.first],each.first);
+                }
+            }
+        }
+        return prob[end];
+    }
+
+     // 1584 Prim's algorithm
+     // if not use heap, time complexity is O(n**2), if use minimum heap, time complexity is O((n+m)log n)
+    int minCostConnectPoints(vector<vector<int>> &points) {
+        int n = points.size();
+        // if a node is in the MST now, mark it as true
+        vector<bool> visit(n, false);
+        vector<vector<int>> graph(n,vector<int>(n));
+        // lowCost[i] means the lowest cost from MST to node i
+        vector<int> lowCost(n,INT_MAX);
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < i; ++j) {
+                int dis = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1]);
+                graph[i][j]=graph[j][i]=dis;
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            lowCost[i]=graph[0][i];
+        }
+        int ans = 0;
+        // start from an arbitrary node, choose 0 here
+        int curNode=0;
+        visit[0] = true;
+        // cause the start node is already in the MST, only need to find n-1 vertices now
+        for (int i = 1; i < n; ++i) {
+            // in each loop, traverse all the reachable nodes in the graph, choose the one that is closest to MST to add into MST
+            int minVal=INT_MAX;
+            for (int j = 0; j < n; ++j) {
+                if (!visit[j] and lowCost[j]<minVal) {
+                    minVal=lowCost[j];
+                    curNode = j;
+                }
+            }
+            ans += lowCost[curNode];
+            visit[curNode] = true;
+            // since we add a new node into MST, the distance from MST to other nodes will change
+            // just traverse all the nodes that connected to new node to update lowCost
+            for (int j = 0; j < n; ++j) {
+                if(!visit[j]){
+                    lowCost[j]=min(lowCost[j],graph[j][curNode]);
+                }
+            }
+        }
+        return ans;
+    }
+
+
+    // 1584 Kruskal algorithm, O(m log n + mn) = O(mn)
+    // as same as disjoint-set data structure, every time choose the edge with lowest weight to build a tree and ensure no circle in the process
+    int minCostConnectPoints(vector <vector<int>> &points) {
+        int n = points.size();
+        // if an edge is in the MST now, mark it as true
+        vector<bool> visit(n, false);
+        struct EDGE {
+            int start;
+            int end;
+            int dis;
+        };
+        vector <EDGE> edges;
+        unordered_set<int> MSTnodes;
+
+        for (int i = 0; i < n; ++i) {
+            for (int j = i+1; j < n; ++j) {
+                int dis = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1]);
+                EDGE edge = {i, j, dis};
+                edges.emplace_back(edge);
+            }
+        }
+
+        std::sort(edges.begin(), edges.end(),[](const EDGE & e1,const EDGE & e2){
+            return e1.dis<e2.dis;
+        });
+
+        int ans = 0;
+
+        // need to choose n-1 edges to build a MST
+        for (int i = 0; i < n - 1; ++i) {
+            int minVal=INT_MAX;
+            int curEdge;
+            for (int j = 0; j < edges.size(); ++j){
+                EDGE edge=edges[j];
+                // check if is visited
+                if(visit[j]){
+                    continue;
+                }
+                // check if the new edge will generate circle
+
+                if(MSTnodes.count(edge.start)!=0 and MSTnodes.count(edge.end)!=0){
+                    continue;
+                }
+                if(edge.dis<minVal){
+                    minVal=edge.dis;
+                    curEdge=j;
+                }
+            }
+            visit[curEdge]=true;
+            ans+=edges[curEdge].dis;
+            // add edge into MST
+            MSTnodes.emplace(edges[curEdge].start);
+            MSTnodes.emplace(edges[curEdge].end);
+        }
+        return ans;
     }
 };
 
