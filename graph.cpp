@@ -333,8 +333,42 @@ public:
         return matrix[src][k + 1];
     }
 
-    // 1514 dijkstra, calculate the shortest path from start to each node in a graph without negative cycle, time complexity depends on the implementation of algorithm. Here is O(mlog m).
+    // 743 dijkstra, calculate the shortest path from start to each node in a graph without negative cycle, time complexity depends on the implementation of algorithm. Here is O(mlog m).
     // if negative weight exists, cannot prove the result is right
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
+        // since we use emplace_back to build graph, we need to change node's index as start from 0
+        k-=1;
+        // set inf as INT_MAX/2 to prevent int overflow
+        vector<int> lowCost(n,INT_MAX/2);
+        // remember to set start's lowCost as 0
+        lowCost[k]=0;
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<>> heap;
+        // graph[start]=[end1,weight1],[end2,weight2],....
+        vector<vector<pair<int,int>>> graph(n);
+        for(auto &edge:times){
+            graph[edge[0]-1].emplace_back(edge[1]-1,edge[2]);
+        }
+        // can choose arbitrary weight here, cause k will be popped out soon
+        heap.emplace(0,k);
+        while(!heap.empty()){
+            int topNode=heap.top().second;
+            heap.pop();
+            for(auto &each:graph[topNode]){
+                int nextNode=each.first,nextNodeWeight=each.second;
+                if(lowCost[nextNode]>lowCost[topNode]+nextNodeWeight){
+                    lowCost[nextNode]=lowCost[topNode]+nextNodeWeight;
+                    heap.emplace(nextNodeWeight,nextNode);
+                }
+            }
+        }
+        int ans=*max_element(lowCost.begin(),lowCost.end());
+        if(ans==INT_MAX/2){
+            return -1;
+        }
+        return ans;
+    }
+
+    // 1514 variant dijkstra problem
     double maxProbability(int n, vector<vector<int>>& edges, vector<double>& succProb, int start, int end) {
         // use this structure to store graph
         // graph[i].second means the prob between graph[i].first and i
@@ -344,8 +378,6 @@ public:
             graph[edge[0]].emplace_back(edge[1],succProb[i]);
             graph[edge[1]].emplace_back(edge[0],succProb[i]);
         }
-        // the algorithm here
-
         priority_queue<pair<double,int>> heap;
         vector<double> prob(n,0);
         // don't need {} to emplace pair

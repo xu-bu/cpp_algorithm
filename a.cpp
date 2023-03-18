@@ -13,63 +13,43 @@ struct TreeNode {
     TreeNode(int x) : left(nullptr), right(nullptr), val(x) {};
 };
 
-
 class Solution {
 public:
-    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
-        int n=edges.size();
-        vector<bool> visit(n);
-        function<bool(int)> checkTree=[&](int deleteEdge){
-            map<int,int> degree;
-            map<int,unordered_set<int>> node2edges;
-            for (int i = 0; i < n; ++i) {
-                if(i!=deleteEdge){
-                    degree[edges[i][0]]++;
-                    degree[edges[i][1]]++;
-                    node2edges[edges[i][0]].emplace(edges[i][1]);
-                    node2edges[edges[i][1]].emplace(edges[i][0]);
-                }
+    int removeStones(vector<vector<int>>& stones) {
+        int rows=stones.size(),cols=stones[0].size();
+        vector<vector<bool>> visited(rows,vector<bool>(cols));
+        function<void(int,int)> bfs=[&](int x, int y){
+            if (!visited[x][y]){
+                return;
             }
-            stack<int> deleteNodes;
-            for(auto &each:degree){
-                if(each.second==1){
-                    deleteNodes.push(each.first);
-                }
+            visited[x][y]=true;
+            for (int i = 0; i < rows; ++i) {
+                bfs(i,y);
             }
-            while(!deleteNodes.empty()){
-                int node=deleteNodes.top();
-                deleteNodes.pop();
-                visit[node-1]=true;
-                for(auto &each:node2edges[node]){
-                    degree[each]--;
-                    if(degree[each]==1){
-                        deleteNodes.emplace(each);
-                    }
-                }
+            for (int i = 0; i < cols; ++i) {
+                bfs(x,i);
             }
-            for(auto each:visit){
-                if(!each){
-                    return false;
-                }
-            }
-            return true;
         };
-        for (int i = n-1; i >=0; --i) {
-            if(checkTree(i)){
-                return edges[i];
+        int ans=0;
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                if (!visited[i][j]){
+                    ans++;
+                    bfs(i,j);
+                }
             }
         }
-        return vector<int>{};
+        return ans;
     }
 };
 
 int main() {
-    string word = "ab";
+    string word = "103301";
     string prefix = "app";
-    vector<int> nums = {6, 2, 2, 2, 6};
-    vector<vector<int>> edges = {{1,2},{2,3},{3,4},{1,4},{1,5}};
+    vector<double> nums = {0.5};
+    vector<vector<int>> edges = {{0,0},{0,2},{1,1},{2,0},{2,2}};
     Solution solution = Solution();
-    solution.findRedundantConnection(edges);
+    cout << solution.removeStones(edges) << endl;
 }
 
 

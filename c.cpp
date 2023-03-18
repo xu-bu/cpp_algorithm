@@ -3,6 +3,6 @@
 using namespace std;
 
 int main() {
-    string s="sdg";
-    cout<<s.reserve();
+    vector<int> v={11,42,32};
+    cout<<INT_MAX;
 }
