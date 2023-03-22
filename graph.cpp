@@ -324,6 +324,7 @@ public:
                 matrix[v][arcs] = matrix[v][arcs - 1];
             }
             for (auto &each: flights) {
+                // if it's an undirected graph，just add one reverse updating here
                 matrix[each[0]][arcs] = min(matrix[each[0]][arcs], each[2] + matrix[each[1]][arcs - 1]);
             }
         }
