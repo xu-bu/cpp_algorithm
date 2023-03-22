@@ -16,13 +16,19 @@ struct TreeNode {
 class Solution {
 public:
     int removeStones(vector<vector<int>>& stones) {
-        int rows=stones.size(),cols=stones[0].size();
-        vector<vector<bool>> visited(rows,vector<bool>(cols));
+        vector<vector<bool>> grid(10e4,vector<bool> (10e4,false));
+        for(auto &each:stones){
+            grid[each[0]][each[1]]=true;
+        }
+        int rows=10e4,cols=10e4;
+//        vector<vector<bool>> visited(rows,vector<bool>(cols));
         function<void(int,int)> bfs=[&](int x, int y){
-            if (!visited[x][y]){
+            if (x==rows or y==cols){
                 return;
             }
-            visited[x][y]=true;
+            if (!grid[x][y]){
+                return;
+            }
             for (int i = 0; i < rows; ++i) {
                 bfs(i,y);
             }
@@ -33,7 +39,7 @@ public:
         int ans=0;
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
-                if (!visited[i][j]){
+                if (grid[i][j]){
                     ans++;
                     bfs(i,j);
                 }
