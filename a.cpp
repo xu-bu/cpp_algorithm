@@ -23,12 +23,10 @@ public:
         int rows=10e4,cols=10e4;
 //        vector<vector<bool>> visited(rows,vector<bool>(cols));
         function<void(int,int)> bfs=[&](int x, int y){
-            if (x==rows or y==cols){
-                return;
-            }
             if (!grid[x][y]){
                 return;
             }
+            grid[x][y]=false;
             for (int i = 0; i < rows; ++i) {
                 bfs(i,y);
             }
