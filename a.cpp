@@ -17,8 +17,15 @@ class Solution {
 public:
     int removeStones(vector<vector<int>>& stones) {
         vector<vector<bool>> grid(10e4,vector<bool> (10e4,false));
+        // if stone's row index is r, then r:i means it belongs to component i
+        map<int,int> row2com,col2com;
+        int ans=0;
         for(auto &each:stones){
-            grid[each[0]][each[1]]=true;
+            if(each[0]==0 and each[1]==0){
+                ans++;
+                row2com[each[0]]=ans;
+                col2com[each[1]]=ans;
+            }
         }
         int rows=10e4,cols=10e4;
 //        vector<vector<bool>> visited(rows,vector<bool>(cols));
