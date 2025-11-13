@@ -4,17 +4,19 @@
 
 using namespace std;
 
-//208
-class Trie {
+// 208
+class Trie
+{
 private:
-
-
-    //if search "a" and there's a "ab",return node 'a'
-    Trie *searchPrefix(string prefix) {
+    // if search "a" and there's a "ab",return node 'a'
+    Trie *searchPrefix(string prefix)
+    {
         Trie *t = this;
-        for (auto &ch: prefix) {
+        for (auto &ch : prefix)
+        {
             ch -= 'a';
-            if (t->children[ch] == nullptr) {
+            if (t->children[ch] == nullptr)
+            {
                 return nullptr;
             }
             t = t->children[ch];
@@ -25,15 +27,18 @@ private:
 public:
     vector<Trie *> children;
     bool isEnd;
-    Trie() : children(26), isEnd(false) {
-
+    Trie() : children(26), isEnd(false)
+    {
     }
 
-    void insert(string word) {
+    void insert(string word)
+    {
         Trie *t = this;
-        for (auto &ch: word) {
+        for (auto &ch : word)
+        {
             ch -= 'a';
-            if (t->children[ch] == nullptr) {
+            if (t->children[ch] == nullptr)
+            {
                 t->children[ch] = new Trie();
             }
             t = t->children[ch];
@@ -41,32 +46,29 @@ public:
         t->isEnd = true;
     }
 
-    bool search(string word) {
+    bool search(string word)
+    {
         Trie *t = searchPrefix(word);
-        if (t == nullptr) {
+        if (t == nullptr)
+        {
             return false;
         }
         return t->isEnd;
     }
 
-    bool startsWith(string prefix) {
+    bool startsWith(string prefix)
+    {
         Trie *t = searchPrefix(prefix);
         return t != nullptr;
     }
 };
 
-int main() {
+int main()
+{
     vector<int> nums = {2, 2, 3, -1};
     string prefix = "app";
 
-    vector<vector<char>> board={{'o','a','a','n'},{'e','t','a','e'},{'i','h','k','r'},{'i','f','l','v'}};
+    vector<vector<char>> board = {{'o', 'a', 'a', 'n'}, {'e', 't', 'a', 'e'}, {'i', 'h', 'k', 'r'}, {'i', 'f', 'l', 'v'}};
     vector<string> words;
-    words={"oath","pea","eat","rain"};
-    Solution solution = Solution();
-    vector<string> tmp=solution.findWords(board,words);
-    for(auto &each:tmp){
-        cout<<each<<endl;
-    }
+    words = {"oath", "pea", "eat", "rain"};
 }
-
-
